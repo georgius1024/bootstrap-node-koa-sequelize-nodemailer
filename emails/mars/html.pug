@@ -1,0 +1,11 @@
+extends ../layout.pug
+
+block jumbotron
+  a(href="http://podft.com") This is a jumbotron
+block header
+  h3 This is a welcome mesage
+block content
+  p Hi #{firstName} #{lastName},
+  p Welcome to Mars, the red planet.
+block action
+  a.btn-primary(href=action.url) #{action.name}

@@ -1,0 +1,10 @@
+extends ../layout.pug
+
+block header
+  h3 Завершение регистрации
+block content
+  p Здравствуйте, #{ name }.
+  p Вы только что зарегистрировались на <b>#{ APP_NAME }</b>.
+  p Для завершения регистрации и входа на сайт щелкните по кнопке.
+block action
+  a.btn-primary(href=action.url) #{action.name}

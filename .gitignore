@@ -1,0 +1,19 @@
+# Node modules
+node_modules
+#editor files
+.idea
+.editorconfig
+#other files
+config
+snapshots
+dump.sql
+*.sh
+*.cmd
+.nyc_output
+
+# Environment variables, never commit this file
+.env
+
+# The development sqlite file
+database/development.sqlite
+
