@@ -27,12 +27,9 @@ module.exports = {
         type: Sequelize.DATE
       }
     })
-      /*
       .then(() => {
         queryInterface.addIndex('tokens', ['user_id'])
       });
-      */
-
   },
   down: (queryInterface, Sequelize) => {
     return queryInterface.dropTable('tokens');

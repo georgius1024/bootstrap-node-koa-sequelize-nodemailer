@@ -11,7 +11,6 @@ const { User, Token } = require('../models')
 const { deleteTokens } = require('../classes/auth')
 const server = require('../index.js')
 
-
 chai.use(chaiHttp)
 const assert = chai.assert
 
@@ -20,7 +19,7 @@ const fakePassword = 'fff848585858'
 const fakeUser = 'User-fff848585858'
 const fakeVerificationCode = uuidv1()
 
-describe('login', async () => {
+describe('login once', async () => {
   let requester, user
   before(async () => {
     requester = chai.request(server).keepOpen()
@@ -39,56 +38,24 @@ describe('login', async () => {
       email: fakeEmail,
       password: fakePassword,
       role: 'user',
-      status: 'new',
+      status: 'active',
       verification_code: fakeVerificationCode
     }
     user = await User
     .build(registration)
     .save()
   })
-  it('Can not login traditional way with wrong login', async () => {
+  it('Can not login with incorrect code', async () => {
     const response = await requester
-    .post('/auth/login')
-    .type('form')
-    .send({
-      email: 'wrong-email'
-    })
-    assert.equal(response.status, 404)
-  })
-  it('Can not login traditional way with wrong password', async () => {
-    const response = await requester
-    .post('/auth/login')
-    .type('form')
-    .send({
-      email: fakeEmail,
-      password: 'wrong'
-    })
+    .get('/auth/once/wrong-code')
+
     assert.equal(response.status, 404)
   })
 
-  it('Can not login traditional when status is new', async () => {
-    user.status = 'new'
-    await user.save()
+  it('Can login once via correct code', async () => {
     const response = await requester
-    .post('/auth/login')
-    .type('form')
-    .send({
-      email: fakeEmail,
-      password: fakePassword
-    })
-    assert.equal(response.status, 500)
-  })
+    .get('/auth/once/' + fakeVerificationCode)
 
-  it('Can login traditional way with correct login and password', async () => {
-    user.status = 'active'
-    await user.save()
-    const response = await requester
-    .post('/auth/login')
-    .type('form')
-    .send({
-      email: fakeEmail,
-      password: fakePassword
-    })
     assert.equal(response.status, 200)
     assert.isObject(response.body)
     assert.equal(response.body.status, 'success')
@@ -105,6 +72,11 @@ describe('login', async () => {
       raw: true
     })
     assert.equal(token.user_id, user.id)
+    // Провера на смену refresh
+
+    const updated = await User.findByPk(user.id)
+    assert.notEqual(updated.verification_code, user.verification_code)
+
   })
 
   after(async () => {

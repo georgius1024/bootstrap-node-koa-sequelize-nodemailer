@@ -3,16 +3,15 @@ const faker = require('faker')
 const bcrypt = require('bcrypt')
 const uuidv1 = require('uuid/v1');
 
-const adminPassword = '111222w'
-const userPassword = '111222w'
+const userPassword = '123'
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const users = []
     users.push({
       name: 'Administrator',
-      email: 'sir-georgius@ya.ru',
-      password: await bcrypt.hash(adminPassword, 10),
+      email: 'user@host.com',
+      password: await bcrypt.hash(userPassword, 10),
       role: 'admin',
       status: 'active',
       verification_code: uuidv1(),

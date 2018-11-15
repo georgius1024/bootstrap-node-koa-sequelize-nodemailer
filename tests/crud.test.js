@@ -13,7 +13,7 @@ class FakeModel {
     this.fields = {}
   }
 
-  findById(id, queryOptions) {
+  findByPk(id, queryOptions) {
     this.queryOptions = queryOptions
     if (id === 999) {
       return this

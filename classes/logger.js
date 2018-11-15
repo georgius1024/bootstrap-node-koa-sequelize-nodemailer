@@ -2,10 +2,9 @@
  * Created by georgius on 20.07.18.
  */
 const options = {
-  level: process.env.MODE === 'production' ? 'info' : 'trace',
-  extreme: process.env.MODE === 'production',
-  prettyPrint: process.env.MODE === 'development',
+  level: process.env.NODE_ENV === 'production' ? 'info' : 'trace',
+  extreme: process.env.NODE_ENV === 'production',
+  prettyPrint: { colorize: true },
 }
 const Logger = require('pino')(options)
-
-module.exports=Logger
+module.exports = Logger

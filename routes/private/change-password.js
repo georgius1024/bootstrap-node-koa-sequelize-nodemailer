@@ -4,8 +4,8 @@
 
 const Router = require('koa-router')
 const bcrypt = require('bcrypt')
-const _ = require('lodash')
-const { User, Token } = require('../../models')
+const _get = require('lodash.get')
+const { User } = require('../../models')
 const { deleteTokens } = require('../../classes/auth')
 const logger = require('../../classes/logger')
 const Response = require('../../classes/response')
@@ -15,8 +15,8 @@ const router = new Router()
 // password
 // password_retype
 router.post('/', async (ctx, next) => {
-  const userId = _.get(ctx, 'state.token.user.id', 0)
-  const user = await User.findById(userId)
+  const userId = _get(ctx, 'state.token.user.id', 0)
+  const user = await User.findByPk(userId)
   if (!user) {
     return Response.unauthorized(ctx)
   } else {

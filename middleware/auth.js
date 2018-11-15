@@ -3,7 +3,7 @@
  */
 const jwt = require('koa-jwt')
 module.exports = jwt({
-  secret: process.env.TOKEN_KEY || 'secret-key-2048',
+  secret: process.env.APP_KEY || 'secret',
   debug: process.env.MODE === 'development',
   key: 'token'
 })

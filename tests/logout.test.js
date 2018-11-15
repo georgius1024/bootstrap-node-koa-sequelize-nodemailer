@@ -1,5 +1,5 @@
 /**
- * Created by georgius on 11.08.18.
+ * Created by georgius on 15.11.18.
  */
 'use strict'
 const chai = require('chai')
@@ -20,8 +20,8 @@ const fakePassword = 'fff848585858'
 const fakeUser = 'User-fff848585858'
 const fakeVerificationCode = uuidv1()
 
-describe('login', async () => {
-  let requester, user
+describe('logout', async () => {
+  let requester, user, accessToken, refreshToken
   before(async () => {
     requester = chai.request(server).keepOpen()
     const existing = await User.findOne({
@@ -33,55 +33,20 @@ describe('login', async () => {
       existing.destroy({ force: true })
     }
 
-    // Создаем пользователя для проверки входа
+    // Создаем пользователя
     const registration = {
       name: fakeUser,
       email: fakeEmail,
       password: fakePassword,
       role: 'user',
-      status: 'new',
+      status: 'active',
       verification_code: fakeVerificationCode
     }
     user = await User
     .build(registration)
     .save()
-  })
-  it('Can not login traditional way with wrong login', async () => {
-    const response = await requester
-    .post('/auth/login')
-    .type('form')
-    .send({
-      email: 'wrong-email'
-    })
-    assert.equal(response.status, 404)
-  })
-  it('Can not login traditional way with wrong password', async () => {
-    const response = await requester
-    .post('/auth/login')
-    .type('form')
-    .send({
-      email: fakeEmail,
-      password: 'wrong'
-    })
-    assert.equal(response.status, 404)
-  })
 
-  it('Can not login traditional when status is new', async () => {
-    user.status = 'new'
-    await user.save()
-    const response = await requester
-    .post('/auth/login')
-    .type('form')
-    .send({
-      email: fakeEmail,
-      password: fakePassword
-    })
-    assert.equal(response.status, 500)
-  })
-
-  it('Can login traditional way with correct login and password', async () => {
-    user.status = 'active'
-    await user.save()
+    // Login user
     const response = await requester
     .post('/auth/login')
     .type('form')
@@ -90,21 +55,34 @@ describe('login', async () => {
       password: fakePassword
     })
     assert.equal(response.status, 200)
+    accessToken = response.body.auth.accessToken
+    refreshToken = response.body.auth.refreshToken
+
+  })
+
+  it('Can not logout when not logged in', async () => {
+    const response = await requester
+    .get('/private/logout')
+    assert.equal(response.status, 401)
+  })
+
+  it('Can logout when logged in', async () => {
+    const response = await requester
+    .get('/private/logout')
+    .set('Authorization', 'Bearer ' + accessToken)
+    assert.equal(response.status, 203)
     assert.isObject(response.body)
     assert.equal(response.body.status, 'success')
     assert.include(response.body.message, fakeUser)
-    assert.equal(response.body.data.id, user.id)
-    assert.isObject(response.body.auth)
-    assert.isOk(response.body.auth.accessToken)
-    assert.isOk(response.body.auth.refreshToken)
-    // Проверка на создание токена
+
+    // Проверка на отсутствие токена
     const token = await Token.findOne({
       where: {
-        token: response.body.auth.refreshToken
+        token: refreshToken
       },
       raw: true
     })
-    assert.equal(token.user_id, user.id)
+    assert.isNotOk(token)
   })
 
   after(async () => {

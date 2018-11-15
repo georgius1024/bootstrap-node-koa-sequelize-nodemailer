@@ -13,7 +13,7 @@ class Crud {
 
   async show (id, options = {}) {
     const queryOptions = pick(options, optionsAvail)
-    const instance = await this.model.findById(id, queryOptions)
+    const instance = await this.model.findByPk(id, queryOptions)
     if (!instance) {
       return Crud.notFoundError()
     } else {
@@ -71,7 +71,7 @@ class Crud {
   // returns instance (formatted)
   async update (id, fields, options = {}) {
     const queryOptions = pick(options, optionsAvail)
-    const instance = await this.model.findById(id, queryOptions)
+    const instance = await this.model.findByPk(id, queryOptions)
     if (!instance) {
       return Crud.notFoundError()
     } else {
@@ -106,7 +106,7 @@ class Crud {
   // options.after(instance) - after delete
 
   async destroy(id, options = {}) {
-    const instance = await this.model.findById(id)
+    const instance = await this.model.findByPk(id)
     if (!instance) {
       return Crud.notFoundError()
     } else {

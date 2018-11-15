@@ -4,9 +4,14 @@
 require('dotenv').config()
 const Koa = require('koa')
 const app = new Koa()
-const logger = require('./classes/logger')
+const serve = require('koa-static')
+const cors = require('@koa/cors')
 const bodyParser = require('koa-bodyparser')
+const compress = require('koa-compress')
 const passport = require('koa-passport')
+const logger = require('./classes/logger')
+
+// Bootstrap application
 const routes = require('./routes')
 
 // Error catcher
@@ -24,15 +29,20 @@ app.use(async (ctx, next) => {
 });
 
 app.on('error', (err) => {
-  console.error(err)
   logger.error(err)
 })
 
+// Global middleware
 app.use(bodyParser())
+app.use(cors())
+app.use(compress())
 app.use(passport.initialize())
 
+// Controllers
 app.use(routes)
 
+// Static
+app.use(serve('public'))
 
 // 404 handler
 app.use(async ctx => {
@@ -40,5 +50,6 @@ app.use(async ctx => {
 });
 
 const port = process.env.PORT || 3000
-app.listen(port);
+const server = app.listen(port);
 logger.info('Listening port ' + port)
+module.exports = server

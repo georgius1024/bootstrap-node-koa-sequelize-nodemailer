@@ -3,7 +3,8 @@
  */
 
 const Router = require('koa-router')
-const _ = require('lodash')
+const _pick = require('lodash.pick')
+const _union = require('lodash.union')
 const uuidv1 = require('uuid/v1')
 const {User, Token} = require('../../models')
 const logger = require('../../classes/logger')
@@ -16,7 +17,7 @@ const browse = new Browse(User)
 const crud = new Crud(User)
 const attributes = ['id', 'name', 'email', 'role', 'status']
 const formatRow = (row => {
-  return _.pick(row, attributes)
+  return _pick(row, attributes)
 })
 
 router.get('/', async (ctx) => {
@@ -69,7 +70,7 @@ router.get('/:id', async (ctx) => {
 router.post('/', async (ctx) => {
   try {
     const options = {
-      fields: _.union(attributes, ['password']),
+      fields: _union(attributes, ['password']),
       format: formatRow
     }
     const fields = ctx.request.body
@@ -95,7 +96,7 @@ router.put('/:id', async (ctx) => {
     }
     const fields = ctx.request.body
     if (!fields.password) {
-      options.fields = _.union(attributes, ['password'])
+      options.fields = _union(attributes, ['password'])
     }
     const instance = await crud.update(ctx.params.id, fields, options)
     return Response.updated(ctx, instance, 'Пользователь обновлен')

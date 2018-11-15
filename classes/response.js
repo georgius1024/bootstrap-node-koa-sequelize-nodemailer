@@ -1,7 +1,7 @@
 /**
  * Created by georgius on 20.07.18.
  */
-const _ = require('lodash')
+const _get = require('lodash.get')
 
 function error (ctx, message = 'General failure', status = 500) {
   ctx.status = status
@@ -53,8 +53,8 @@ function list (ctx, data, meta) {
   }
 }
 
-function validation (ctx, errors) {
-  let errorMessage = errors[0].message
+function validation (ctx, errors, message = '') {
+  let errorMessage = message || _get(errors, '0.message') || _get(errors, '0.error')
   ctx.status = 422
   ctx.body = {
     'status': 'error',
@@ -69,7 +69,7 @@ function customValidation (ctx, field, message) {
   ctx.body = {
     'status': 'error',
     errors: [{
-      error: message,
+      message: message,
       validation: 'custom',
       field
     }],

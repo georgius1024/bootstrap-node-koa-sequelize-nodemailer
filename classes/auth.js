@@ -6,17 +6,17 @@ const bcrypt = require('bcrypt')
 const LocalStrategy = require('passport-local').Strategy
 const ms = require('ms')
 const jwt = require('jsonwebtoken');
-const {promisify} = require('es6-promisify');
+const { promisify } = require('es6-promisify');
 const uuidv1 = require('uuid/v1');
-const _ = require('lodash')
-
+const _pick = require('lodash.pick')
 const {Sequelize, User, Token} = require('../models')
 
-const accessTokenTtl = ms(process.env.ACCESS_TOKEN_TTL || '1 hour')
-const refreshTokenTtl = ms(process.env.REFRESH_TOKEN_TTL || '180 days')
-const secret = process.env.TOKEN_KEY || 'secret-key-2048'
-
 const signAsync = promisify(jwt.sign, jwt);
+
+const accessTokenTtl = ms(process.env.ACCESS_TOKEN_TTL || '1 day')
+const refreshTokenTtl = ms(process.env.REFRESH_TOKEN_TTL || '180 days')
+const secret = process.env.APP_KEY || 'secret'
+
 
 const generateTokens = async (user, opts = {}) => {
   try {
@@ -50,22 +50,22 @@ const generateTokens = async (user, opts = {}) => {
 }
 
 const publicProfile = (user) => {
-  return _.pick(user, ['id', 'name', 'email', 'role', 'status'])
+  return _pick(user, ['id', 'name', 'email', 'role', 'status'])
 }
 
 const deleteTokens = async (id) => {
   Token.destroy({
     where: {
       user_id: id
-    }
+    },
   })
 }
-
 
 const options = {
   usernameField: 'email',
   session: false
 }
+
 passport.use(new LocalStrategy(options,
   async (username, password, done) => {
     const user = await User.findOne({
@@ -78,22 +78,13 @@ passport.use(new LocalStrategy(options,
       if (valid) {
         done(null, user.dataValues)
       } else {
-        done('Неправильно введен пароль или логин')
+        done('Неправильно введен пароль')
       }
     } else {
-      done('Неправильно введен логин или пароль')
+      done('Неправильно введен email')
     }
   })
 )
-
-passport.serializeUser((user, done) => {
-  done(null, user)
-})
-
-passport.deserializeUser(async (id, done) => {
-  done(null, user);
-})
-
 
 module.exports = {
   generateTokens,

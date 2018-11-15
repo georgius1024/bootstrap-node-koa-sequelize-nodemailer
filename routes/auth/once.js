@@ -13,12 +13,11 @@ const router = new Router()
 
 router.get('/:code', async (ctx) => {
   const verificationCode = ctx.params.code
-  const list = await User.findAll({
+  const user = await User.findOne({
     where: {
       verification_code: verificationCode
     }
   })
-  const user = list[0]
   if (!user) {
     return Response.error(ctx, 'Неправильный код авторизации. Вероятно, эта одноразовая ссылка уже была использована', 404)
   } else {
@@ -40,8 +39,3 @@ router.get('/:code', async (ctx) => {
 })
 
 module.exports = router
-/*
-module.exports = (path, parent) => {
-  parent.use(path, router.routes(), router.allowedMethods())
-}
-*/

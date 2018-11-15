@@ -35,21 +35,28 @@ const Mailer = new Email({
       relativeTo: path.resolve('assets')
     }
   },
-  send: process.env.NODE_ENV === 'production',
+  send: process.env.NODE_ENV !== 'test',
+  preview: process.env.NODE_ENV === 'development',
   transport: nodemailer.createTransport(smtpConfig)
 })
 
 const sendMail = (recipient, template, locals, from = '') => {
-  locals.APP_NAME = process.env.APP_NAME
   return Mailer
     .send({
       template,
       message: {
         to: recipient,
-        from: from || process.env.MAIL_USERNAME
+        from: from || process.env.MAIL_FROM_NAME
       },
       locals
     })
+    .then(res => {
+      Mailer.lastMessage = res.originalMessage
+    })
+    .catch(error => {
+      throw error
+    })
+
 }
 
 function welcomeMessage(recipient) {

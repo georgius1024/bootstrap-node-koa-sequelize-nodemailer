@@ -11,20 +11,19 @@ const Response = require('../../classes/response')
 const router = new Router()
 
 router.post('/', async (ctx, next) => {
-  const list = await Token.findAll({
+  const token = await Token.findOne({
     where: {
       token: ctx.request.body.token
     }
   })
-  const token = list[0]
   if (token) {
     token.destroy()
-    const user = await User.findById(token.user_id)
+    const user = await User.findByPk(token.user_id)
     if (user) {
       logger.error('user #%d refreshed token', user.id)
       const userData = publicProfile(user)
       const auth = await generateTokens(userData)
-      return Response.authorized(ctx, userData, auth, 'Мы ждали Вас, ' + userData.name)
+      return Response.authorized(ctx, userData, auth)
     } else {
       logger.error('Wrong refresh token', token)
       return Response.error(ctx, 'Невозможно обновить токен, залогиньтесь, пожалуйста', 401)
@@ -33,7 +32,6 @@ router.post('/', async (ctx, next) => {
     logger.error('Wrong refresh request', ctx.request.body)
     return Response.error(ctx, 'Невозможно обновить токен, перелогиньтесь, пожалуйста', 401)
   }
-  logger.info(ctx.request.body.token)
 })
 
 module.exports = router
