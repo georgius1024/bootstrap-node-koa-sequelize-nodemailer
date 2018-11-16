@@ -20,7 +20,7 @@ router.post('/', async (ctx, next) => {
   if (!user) {
     return Response.unauthorized(ctx)
   } else {
-    // Проверка старого пароля
+    const reset = user.status === 'reset'
     const old = ctx.request.body.old_password
     const pass = ctx.request.body.password
     const retype = ctx.request.body.password_retype
@@ -40,21 +40,24 @@ router.post('/', async (ctx, next) => {
         }],
         'Пароль пустой')
     }
-    if (!old) {
-      return Response.validation(ctx,
-        [{
-          error: 'Старый пароль пустой',
-          field: 'old_password'
-        }],
-        'Старый пароль пустой')
-    }
-    const valid = await bcrypt.compare(old, user.password)
-    if (!valid) {
-      return Response.validation(ctx, [{
-          error: 'Неправильный пароль',
-          field: 'old_password'
-        }],
-        'Старый пароль введен неправильно', 422)
+    if (!reset) {
+      // Проверка старого пароля
+      if (!old) {
+        return Response.validation(ctx,
+          [{
+            error: 'Старый пароль пустой',
+            field: 'old_password'
+          }],
+          'Старый пароль пустой')
+      }
+      const valid = await bcrypt.compare(old, user.password)
+      if (!valid) {
+        return Response.validation(ctx, [{
+            error: 'Неправильный пароль',
+            field: 'old_password'
+          }],
+          'Старый пароль введен неправильно', 422)
+      }
     }
 
     user.status = 'active'

@@ -50,7 +50,7 @@ const generateTokens = async (user, opts = {}) => {
 }
 
 const publicProfile = (user) => {
-  return _pick(user, ['id', 'name', 'email', 'role', 'status'])
+  return _pick(user, ['id', 'name', 'email', 'about', 'role', 'status'])
 }
 
 const deleteTokens = async (id) => {

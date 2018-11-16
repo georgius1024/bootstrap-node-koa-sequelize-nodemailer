@@ -13,6 +13,8 @@ const { welcomeMessage } = require('../../classes/mailer')
 const router = new Router()
 
 router.post('/', async (ctx, next) => {
+  console.log(ctx.request.body)
+
   return passport.authenticate('local', async (err, user) => {
     if (!user) {
       logger.trace(err)

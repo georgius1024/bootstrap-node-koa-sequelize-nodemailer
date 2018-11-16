@@ -8,7 +8,7 @@ const hashPasswordHook = async (instance, options) => {
 };
 
 module.exports = (sequelize, DataTypes) => {
-  var User = sequelize.define('User', {
+  const User = sequelize.define('User', {
     name: {
       type:  DataTypes.STRING,
       allowNull: false,
@@ -69,6 +69,9 @@ module.exports = (sequelize, DataTypes) => {
     verification_code: {
       type:  DataTypes.STRING,
       allowNull: false
+    },
+    about: {
+      type:  DataTypes.STRING,
     }
   }, {
     tableName: 'users',

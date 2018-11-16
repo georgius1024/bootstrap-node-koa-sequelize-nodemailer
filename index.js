@@ -49,7 +49,7 @@ app.use(async ctx => {
   ctx.throw(404, 'Route not found for ' +  ctx.method + ' ' + ctx.href)
 });
 
-const port = process.env.PORT || 3000
+const port = process.env.APP_LISTEN_PORT || 3000
 const server = app.listen(port);
 logger.info('Listening port ' + port)
 module.exports = server

@@ -80,7 +80,7 @@ function passwordlessLoginMessage(recipient) {
 function passwordResetMessage(recipient) {
   const locals = Object.assign({}, recipient)
   locals.action = {
-    url: process.env.FRONTEND_PASSWORD_RESET + '?code=' + locals.verification_code,
+    url: process.env.FRONTEND_ACTIVATION + '?code=' + locals.verification_code,
     name: 'Сменить пароль'
   }
   return sendMail(locals.email, 'reset', locals)

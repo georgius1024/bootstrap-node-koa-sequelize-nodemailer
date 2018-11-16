@@ -28,6 +28,7 @@ router.post('/', async (ctx, next) => {
   if (user) {
     user.name = ctx.request.body.name || user.name
     user.email = ctx.request.body.email || user.email
+    user.about = ctx.request.body.about || user.about
     await user.save()
     const userData = publicProfile(user)
     logger.debug('user #%d updated profile', user.id)

@@ -146,7 +146,33 @@ describe('change password', async () => {
     const updated = await User.findByPk(user.id)
     const valid = await bcrypt.compare(newFakePassword, updated.password)
     assert.isOk(valid)
+
+
+
   })
+
+  it('User can change password without old password when in reset state', async () => {
+    user.status = 'reset'
+    await user.save()
+    const response = await requester
+    .post('/private/change-password')
+    .type('form')
+    .send({
+      password,
+      password_retype,
+    })
+    .set('Authorization', 'Bearer ' + accessToken)
+
+    assert.equal(response.status, 200)
+    assert.isObject(response.body)
+    assert.equal(response.body.status, 'success')
+    assert.equal(response.body.message, 'Пароль изменен')
+    const updated = await User.findByPk(user.id)
+    const valid = await bcrypt.compare(newFakePassword, updated.password)
+    assert.isOk(valid)
+  })
+
+
 
   after(async () => {
     requester.close()

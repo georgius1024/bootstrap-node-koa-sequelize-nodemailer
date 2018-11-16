@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "test": "nyc mocha ./tests/before.js ./tests/*.test.js --exit",
-    "focus-test": "mocha ./tests/before.js ./tests/login.test.js --exit"
+    "focus-test": "mocha ./tests/before.js ./tests/profile.test.js --exit"
   },
   "keywords": [],
   "author": "",

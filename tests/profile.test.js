@@ -39,7 +39,8 @@ describe('change password', async () => {
       password: fakePassword,
       role: 'user',
       status: 'active',
-      verification_code: fakeVerificationCode
+      verification_code: fakeVerificationCode,
+      about: '-'
     }
     user = await User
     .build(registration)
@@ -69,6 +70,7 @@ describe('change password', async () => {
       id: user.id,
       name: fakeUser,
       email: fakeEmail,
+      about: '-',
       role: 'user',
       status: 'active'
     })
@@ -87,7 +89,8 @@ describe('change password', async () => {
     .type('form')
     .send({
       email: fakeEmail,
-      name: newFakeUser
+      name: newFakeUser,
+      about: '123'
     })
     .set('Authorization', 'Bearer ' + accessToken)
     assert.equal(response.status, 200)
@@ -97,6 +100,7 @@ describe('change password', async () => {
       id: user.id,
       name: newFakeUser,
       email: fakeEmail,
+      about: '123',
       role: 'user',
       status: 'active'
     })
