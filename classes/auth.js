@@ -10,6 +10,7 @@ const { promisify } = require('es6-promisify');
 const uuidv1 = require('uuid/v1');
 const _pick = require('lodash.pick')
 const {Sequelize, User, Token} = require('../models')
+const path = require('path')
 
 const signAsync = promisify(jwt.sign, jwt);
 
@@ -50,7 +51,11 @@ const generateTokens = async (user, opts = {}) => {
 }
 
 const publicProfile = (user) => {
-  return _pick(user, ['id', 'name', 'email', 'about', 'role', 'status'])
+  const fields = _pick(user, ['id', 'name', 'email', 'about', 'avatar', 'role', 'status'])
+  if (fields.avatar) {
+    fields.avatar = process.env.APP_PUBLIC_URL + '/uploads/avatars/' + fields.avatar
+  }
+  return fields
 }
 
 const deleteTokens = async (id) => {

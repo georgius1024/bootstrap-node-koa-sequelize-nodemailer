@@ -6,7 +6,7 @@ const Koa = require('koa')
 const app = new Koa()
 const serve = require('koa-static')
 const cors = require('@koa/cors')
-const bodyParser = require('koa-bodyparser')
+const koaBody = require('koa-body')
 const compress = require('koa-compress')
 const passport = require('koa-passport')
 const logger = require('./classes/logger')
@@ -33,7 +33,7 @@ app.on('error', (err) => {
 })
 
 // Global middleware
-app.use(bodyParser())
+app.use(koaBody({ multipart: true }))
 app.use(cors())
 app.use(compress())
 app.use(passport.initialize())
