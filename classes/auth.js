@@ -6,10 +6,10 @@ const bcrypt = require('bcrypt')
 const LocalStrategy = require('passport-local').Strategy
 const ms = require('ms')
 const jwt = require('jsonwebtoken');
-const { promisify } = require('es6-promisify');
+const { promisify } = require('util');
 const uuidv1 = require('uuid/v1');
 const _pick = require('lodash.pick')
-const {Sequelize, User, Token} = require('../models')
+const { User, Token } = require('../models')
 const path = require('path')
 
 const signAsync = promisify(jwt.sign, jwt);
@@ -66,12 +66,13 @@ const deleteTokens = async (id) => {
   })
 }
 
-const options = {
+
+const localStartegyOptions = {
   usernameField: 'email',
   session: false
 }
 
-passport.use(new LocalStrategy(options,
+passport.use(new LocalStrategy(localStartegyOptions,
   async (username, password, done) => {
     const user = await User.findOne({
       where: {
@@ -81,12 +82,12 @@ passport.use(new LocalStrategy(options,
     if (user) {
       const valid = await bcrypt.compare(password, user.password)
       if (valid) {
-        done(null, user.dataValues)
+        return done(null, user.dataValues)
       } else {
-        done('Неправильно введен пароль')
+        return done('Неправильно введен пароль')
       }
     } else {
-      done('Неправильно введен email')
+      return done('Неправильно введен email')
     }
   })
 )

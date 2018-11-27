@@ -60,7 +60,7 @@ router.post('/', async (ctx, next) => {
     user.email = ctx.request.body.email || user.email
     user.about = ctx.request.body.about || user.about
     // TODO тестировать загрузку аватарок
-    if (ctx.request.files.avatar.name && ctx.request.files.avatar.size) {
+    if (ctx.request.files && ctx.request.files.avatar && ctx.request.files.avatar.name && ctx.request.files.avatar.size) {
       // Убрать старый аватар
       if (user.avatar) {
         const avatarFile = path.join('./public/uploads/avatars/', user.avatar)

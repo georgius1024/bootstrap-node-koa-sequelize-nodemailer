@@ -6,6 +6,7 @@ node_modules
 #other files
 config
 snapshots
+public/uploads
 dump.sql
 *.sh
 *.cmd

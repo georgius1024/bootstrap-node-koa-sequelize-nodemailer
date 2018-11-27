@@ -71,6 +71,7 @@ describe('change password', async () => {
       name: fakeUser,
       email: fakeEmail,
       about: '-',
+      avatar: null,
       role: 'user',
       status: 'active'
     })
@@ -101,6 +102,7 @@ describe('change password', async () => {
       name: newFakeUser,
       email: fakeEmail,
       about: '123',
+      avatar: null,
       role: 'user',
       status: 'active'
     })
